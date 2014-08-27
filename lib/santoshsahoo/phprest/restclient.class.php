@@ -23,6 +23,7 @@ namespace santoshsahoo\phprest;
  **/
   class RestClient {
       const CONT_JSON = "application/json";
+      const USER_AGENT = "phpcurl/RestClient-0.1";
 
       const GET = "GET";
       const POST = "POST";
@@ -31,12 +32,10 @@ namespace santoshsahoo\phprest;
 
       private $debugMode;
       private $baseURL;
-      private $apiVersion;
 
-      public function __construct($baseURL="", $apiVersion="", $debugMode=false){
-        $this->apiVersion = $apiVersion;
+      public function __construct($baseURL="", $debugMode=false){
         $this->debugMode = $debugMode;
-        $this->baseUrl = $baseURL;
+        $this->baseURL = $baseURL;
       }
 
       private function debugLog($str){
@@ -54,7 +53,8 @@ namespace santoshsahoo\phprest;
       }
 
       public function doRequest($method, $path, $params=array()){
-        $url = implode("/", array($this->baseURL, $this->apiVersion, $path));
+        $url = implode(array($this->baseURL, $path));
+        $this->debugLog($url);
         $this->debugDump($params);
 
         if ($method == self::GET && $params != null){
@@ -72,57 +72,61 @@ namespace santoshsahoo\phprest;
 
         $ch = curl_init();
 
-        curl_setopt($ch,CURLOPT_URL, $url);
-        curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+        curl_setopt($ch, CURLOPT_USERAGENT, self::USER_AGENT);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
         if ($method == self::POST){
-            $this->debugLog("Method POST");
+            $this->debugLog("Method: POST");
             curl_setopt($ch,CURLOPT_POST, true);
             curl_setopt($ch,CURLOPT_POSTFIELDS, $params);
         }
 
         if ($method == self::PUT){
-            $this->debugLog("Method PUT");
+            $this->debugLog("Method: PUT");
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, self::PUT);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
         }
 
         if ($method == self::DELETE){
-            $this->debugLog("Method DELETE");
+            $this->debugLog("Method: DELETE");
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, self::DELETE);
         }
 
         $result = curl_exec($ch);
 
         if ($result == false){
-            throw new RestException('Unable to '. $method. $url, 400);
+            throw new RestException('Failed to: '. $method. $url, 400);
         }
 
         $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $this->debugLog("http code is : ".$http_status);
+        $this->debugLog("http code is: ".$http_status);
 
         if ($http_status != 200) {
             switch ($http_status) {
                 case 404:
-                    throw new RestException("Not found 404", $http_status);
+                    throw new RestException("Not found", $http_status);
                 break;
                 case 401:
-                    throw new RestException("Unauthorized 401", $http_status);
+                    throw new RestException("Unauthorized", $http_status);
                 break;
                 case 503:
-                    throw new RestException("Service not available, 503", $http_status);
+                    throw new RestException("Service not available", $http_status);
                 break;
                 default:
-                    throw new RestException("Http Error ".$http_status, $http_status);
+                    throw new RestException("Http Error: ".$http_status, $http_status);
                 break;
             }
         }
 
         $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
         curl_close($ch);
-
-        if ($contentType == self::CONT_JSON) {
+        
+        $this->debugLog("content type is: " . $contentType);
+        
+        if(stripos($contentType, self::CONT_JSON) !== FALSE){        
+            $this->debugLog("Decoding json");
             $result_obj = json_decode($result, true);
         } else {
             $result_obj = utf8_decode($result);
@@ -148,5 +152,5 @@ namespace santoshsahoo\phprest;
       }
   }
 
-  class RestException extends Exception{}
+  class RestException extends \Exception{}
 ?>
