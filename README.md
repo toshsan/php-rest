@@ -3,7 +3,19 @@ php-rest
 
 Yet another rest client library for PHP
 
-##Example
+##Api
+```php
+//constructor
+new RestClient($baseURL="", $debugMode=false)
+
+//methods
+public function doGet($url, $params=array())
+public function doPost($url, $params)
+public function doPut($url, $params)
+public function doDelete($url, $params=array())
+```
+
+##Examples
 
 ```php
 <?php
