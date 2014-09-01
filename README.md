@@ -1,9 +1,9 @@
 php-rest
 ========
 
-A rest client for PHP to make consuming rest api easier. This library will automatically decode response to json where response content type is 'application/json'. JSON is used by most modern rest services for serialization. So you can focus on your application code without worrying for decoding.
+A rest client for PHP to make consuming rest api easier. This library will automatically decode response to json where response content type is `application/json`. JSON is used by most modern rest services for serialization. So you can focus on your application code without worrying for decoding.
 
-This library depends on php5_curl library. You can install it using `sudo apt-get install php5-curl` or `yum install php5-curl'
+This library depends on php5_curl library. You can install it using `sudo apt-get install php5-curl` or `yum install php5-curl`
 
 The constructor takes an optional base url, this makes consuming api from a single source much easier.
 
