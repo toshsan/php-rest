@@ -1,7 +1,11 @@
 php-rest
 ========
 
-Yet another rest client library for PHP
+A rest client for PHP to make consuming rest api easier. This library will automatically decode response to json where response content type is 'application/json'. JSON is used by most modern rest services for serialization. So you can focus on your application code without worrying for decoding.
+
+This library depends on php5_curl library. You can install it using `sudo apt-get install php5-curl` or `yum install php5-curl'
+
+The constructor takes an optional base url, this makes consuming api from a single source much easier.
 
 ##Api
 ```php
@@ -23,8 +27,22 @@ public function doDelete($url, $params=array())
 
   use santoshsahoo\phprest\RestClient;
      
-  $client = new RestClient('http://127.0.0.1:5000');
+  $client = new RestClient('http://api.example.com/v1');
   $data = $client->doPost('/sum', array('x'=>1, 'y'=>2)); //json
+  $result = $data['result'];
+?>
+```
+
+Or as
+
+```php
+<?php
+  include '../lib/santoshsahoo/phprest/restclient.class.php';
+
+  use santoshsahoo\phprest\RestClient;
+     
+  $client = new RestClient();
+  $data = $client->doPut('http://api.example.com/v2/update-user', array('x'=>1, 'y'=>2)); //json
   $result = $data['result'];
 ?>
 ```
