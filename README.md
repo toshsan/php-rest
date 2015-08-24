@@ -1,6 +1,8 @@
 php-rest
 ========
 
+[![Join the chat at https://gitter.im/santoshsahoo/php-rest](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/santoshsahoo/php-rest?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A rest client to make consuming rest services easier in PHP. This library will automatically decode json response to php array where response content type is `application/json`. JSON serialization is used in most modern rest services. So you can focus on your application code without worrying about decoding your self.
 
 This library depends on *php5 curl* library. You can install it using `sudo apt-get install php5-curl` or `yum install php5-curl`
